@@ -327,6 +327,7 @@ export class NavigationDrawer extends BaseComponent implements ToggleView, OnIni
 
     private swipe = (evt: HammerInput) => { //use lambda to keep class scope (http://stackoverflow.com/questions/18423410/typescript-retain-scope-in-event-listener)
         // TODO: Could also force input type: http://stackoverflow.com/a/27108052
+        console.log("swipe");
         if(!this.enableGestures || evt.pointerType !== "touch") {
             return;
         }
@@ -350,6 +351,7 @@ export class NavigationDrawer extends BaseComponent implements ToggleView, OnIni
     }
 
     private panstart = (evt: HammerInput) => { // TODO: test code
+        console.log("panstart");
         if(!this.enableGestures || this.pin || evt.pointerType !== "touch") {
             return;
         }
@@ -367,6 +369,7 @@ export class NavigationDrawer extends BaseComponent implements ToggleView, OnIni
     }
 
     private pan = (evt: HammerInput) => {
+        console.log("pan");
         // TODO: input.deltaX = prevDelta.x + (center.x - offset.x); get actual delta (not total session one) from event?
         // pan WILL also fire after a full swipe, only resize on flag
         if (!this._panning) {
@@ -410,6 +413,7 @@ export class NavigationDrawer extends BaseComponent implements ToggleView, OnIni
     }
 
     private panEnd = (evt: HammerInput) => {
+        console.log("panEnd");
         if(this._panning) {
             var deltaX = this.position === "right" ? -evt.deltaX : evt.deltaX,
                 visibleWidth: number = this._panStartWidth + deltaX;

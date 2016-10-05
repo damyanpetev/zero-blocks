@@ -15,7 +15,7 @@ import * as Infragistics from '../../src/main';
 declare var Simulator: any;
 var oldTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
 
-    describe('Navigation Drawer', function() {
+    fdescribe('Navigation Drawer', function() {
         beforeEach(async(() => {
             jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
             TestBed.configureTestingModule({
@@ -227,8 +227,13 @@ var oldTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
             TestBed.compileComponents().then(() => {
                 fixture = TestBed.createComponent(TestComponentDI);
                 fixture.detectChanges();
-                expect(fixture.componentInstance.viewChild.isOpen).toEqual(false);
+                expect(fixture.componentInstance.viewChild.isOpen).toEqual(false, "should be intially closed");
                 
+                let hammer = new Hammer(document.body, { recognizers: [] });
+                hammer.add(new Hammer.Swipe());
+                hammer.on('swipe', function() {
+                    console.log("swipe recognized");
+                });
                 //timeouts are +50 on the gesture to allow the swipe to be detected and triggered after the touches:
 
                 Simulator.gestures.swipe(document.body, { pos: [80, 10], duration: 100, deltaX: 250, deltaY: 0 });
