@@ -13,6 +13,10 @@ import * as Infragistics from '../../src/main';
 
 // HammerJS simulator from https://github.com/hammerjs/simulator, manual typings TODO
 declare var Simulator: any;
+// from https://github.com/hammerjs/hammer.js/blob/master/tests/unit/index.html#L16
+Simulator.setType('touch');
+Simulator.events.touch.fakeSupport();
+
 var oldTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
 
     fdescribe('Navigation Drawer', function() {
