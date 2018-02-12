@@ -1,14 +1,20 @@
-import { Inject, Injectable, NgZone } from "@angular/core";
-import { DOCUMENT, ɵgetDOM as getDOM } from "@angular/platform-browser";
+import { Inject, Injectable, InjectionToken, NgZone } from "@angular/core";
+import { DOCUMENT, HAMMER_GESTURE_CONFIG, HammerGestureConfig } from "@angular/platform-browser";
+import { EventManagerPlugin } from "@angular/platform-browser/src/dom/events/event_manager";
 
-const EVENT_SUFFIX = "precise";
+const EVENT_PREFIX = "igx-";
+
+/**
+ * TODO
+ */
+export const IGX_HAMMER_OPTIONS = new InjectionToken<HammerOptions>("HammerOptions");
 
 /**
  * Touch gestures manager based on Hammer.js
  * Use with caution, this will track references for single manager per element. Very TBD. Much TODO.
  */
 @Injectable()
-export class HammerGesturesManager {
+export class HammerGesturesManager extends EventManagerPlugin {
     /**
      * Event option defaults for each recognizer, see http://hammerjs.github.io/api/ for API listing.
      */
@@ -28,11 +34,17 @@ export class HammerGesturesManager {
 
     private _hammerManagers: Array<{ element: EventTarget, manager: HammerManager; }> = [];
 
-    constructor(private _zone: NgZone, @Inject(DOCUMENT) private doc: any) {
+    constructor(
+            @Inject(DOCUMENT) doc: any,
+            @Inject(IGX_HAMMER_OPTIONS) private options: HammerOptions) {
+        super(doc);
+        if (this.options) {
+            Object.assign(this.hammerOptions, this.options);
+        }
     }
 
     public supports(eventName: string): boolean {
-        return eventName.toLowerCase().endsWith("." + EVENT_SUFFIX);
+        return eventName.toLowerCase().startsWith(EVENT_PREFIX);
     }
 
     /**
@@ -43,41 +55,21 @@ export class HammerGesturesManager {
                             eventName: string,
                             eventHandler: (eventObj) => void,
                             options: object = null): () => void {
+        const zone = this.manager.getZone();
+        eventName = eventName.replace(EVENT_PREFIX, "");
 
         // Creating the manager bind events, must be done outside of angular
-        return this._zone.runOutsideAngular(() => {
+        return this.manager.getZone().runOutsideAngular(() => {
             let mc: HammerManager = this.getManagerForElement(element);
             if (mc === null) {
                 // new Hammer is a shortcut for Manager with defaults
                 mc = new Hammer(element, this.hammerOptions);
                 this.addManagerForElement(element, mc);
             }
-            const handler = (eventObj) => { this._zone.run(() => { eventHandler(eventObj); }); };
+            const handler = (eventObj) => { zone.run(() => { eventHandler(eventObj); }); };
             mc.on(eventName, handler);
             return () => { mc.off(eventName, handler); };
         });
-    }
-
-    /**
-     * Add listener extended with options for Hammer.js. Will use defaults if none are provided.
-     * Modeling after other event plugins for easy future modifications.
-     *
-     * @param target Can be one of either window, body or document(fallback default).
-     */
-    public addGlobalEventListener(target: string, eventName: string, eventHandler: (eventObj) => void): () => void {
-        const element = this.getGlobalEventTarget(target);
-
-        // Creating the manager bind events, must be done outside of angular
-        return this.addEventListener(element as HTMLElement, eventName, eventHandler);
-    }
-
-    /**
-     * Exposes [Dom]Adapter.getGlobalEventTarget to get global event targets.
-     * Supported: window, document, body. Defaults to document for invalid args.
-     * @param target Target name
-     */
-    public getGlobalEventTarget(target: string): EventTarget {
-        return getDOM().getGlobalEventTarget(this.doc, target);
     }
 
     /**

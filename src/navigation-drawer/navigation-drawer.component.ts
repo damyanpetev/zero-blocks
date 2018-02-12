@@ -22,6 +22,7 @@ import { Subscription } from "rxjs/Subscription";
 import { BaseComponent } from "../core/base";
 import { IgxNavigationService, IToggleView } from "../core/navigation";
 import { HammerGesturesManager } from "../core/touch";
+import { EVENT_MANAGER_PLUGINS } from "@angular/platform-browser";
 
 /**
  * Navigation Drawer component supports collapsible side navigation container.
@@ -609,7 +610,14 @@ export class IgxNavigationDrawerComponent extends BaseComponent implements ITogg
 
 @NgModule({
     declarations: [IgxNavigationDrawerComponent],
-    exports: [IgxNavigationDrawerComponent]
+    exports: [IgxNavigationDrawerComponent],
+    providers: [
+        {
+            provide: EVENT_MANAGER_PLUGINS,
+            useClass: HammerGesturesManager,
+            multi: true
+        }
+    ]
 })
 export class IgxNavigationDrawerModule {
 }
