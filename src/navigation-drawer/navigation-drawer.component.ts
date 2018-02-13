@@ -3,6 +3,7 @@ import {
     Component,
     ElementRef,
     EventEmitter,
+    HostListener,
     Inject,
     Input,
     NgModule,
@@ -21,7 +22,7 @@ import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs/Subscription";
 import { BaseComponent } from "../core/base";
 import { IgxNavigationService, IToggleView } from "../core/navigation";
-import { HammerGesturesManager } from "../core/touch";
+import { HammerGesturesManager, IGX_HAMMER_OPTIONS } from "../core/touch";
 import { EVENT_MANAGER_PLUGINS } from "@angular/platform-browser";
 
 /**
@@ -421,14 +422,14 @@ export class IgxNavigationDrawerComponent extends BaseComponent implements ITogg
             // https://github.com/angular/angular/issues/6993
             // Use ours for now (until beta.10):
             // this.renderer.listen(document, "swipe", this.swipe);
-            this._touchManager.addGlobalEventListener("document", "swipe", this.swipe);
+            // this._touchManager.addGlobalEventListener("document", "swipe", this.swipe);
             this._gesturesAttached = true;
 
             // this.renderer.listen(document, "panstart", this.panstart);
             // this.renderer.listen(document, "pan", this.pan);
-            this._touchManager.addGlobalEventListener("document", "panstart", this.panstart);
-            this._touchManager.addGlobalEventListener("document", "panmove", this.pan);
-            this._touchManager.addGlobalEventListener("document", "panend", this.panEnd);
+            // this._touchManager.addGlobalEventListener("document", "panstart", this.panstart);
+            // this._touchManager.addGlobalEventListener("document", "panmove", this.pan);
+            // this._touchManager.addGlobalEventListener("document", "panend", this.panEnd);
         }
         if (this.pinThreshold && !this._resizeObserver) {
             this._resizeObserver = Observable.fromEvent(window, "resize").debounce(() => Observable.interval(150))
@@ -459,7 +460,8 @@ export class IgxNavigationDrawerComponent extends BaseComponent implements ITogg
         }
     }
 
-    private swipe = (evt: HammerInput) => {
+    @HostListener("document:igx-swipe", ["$event"])
+    public swipe = (evt: HammerInput) => {
         // TODO: Could also force input type: http://stackoverflow.com/a/27108052
         if (!this.enableGestures || evt.pointerType !== "touch") {
             return;
@@ -484,7 +486,8 @@ export class IgxNavigationDrawerComponent extends BaseComponent implements ITogg
         }
     }
 
-    private panstart = (evt: HammerInput) => { // TODO: test code
+    @HostListener("document:igx-panstart", ["$event"])
+    public panstart = (evt: HammerInput) => { // TODO: test code
         if (!this.enableGestures || this.pin || evt.pointerType !== "touch") {
             return;
         }
@@ -502,7 +505,8 @@ export class IgxNavigationDrawerComponent extends BaseComponent implements ITogg
         }
     }
 
-    private pan = (evt: HammerInput) => {
+    @HostListener("document:igx-panmove", ["$event"])
+    public pan = (evt: HammerInput) => {
         // TODO: input.deltaX = prevDelta.x + (center.x - offset.x);
         // get actual delta (not total session one) from event?
         // pan WILL also fire after a full swipe, only resize on flag
@@ -550,7 +554,8 @@ export class IgxNavigationDrawerComponent extends BaseComponent implements ITogg
         }
     }
 
-    private panEnd = (evt: HammerInput) => {
+    @HostListener("document:igx-panend", ["$event"])
+    public panEnd = (evt: HammerInput) => {
         if (this._panning) {
             const deltaX = this.position === "right" ? -evt.deltaX : evt.deltaX;
             const visibleWidth: number = this._panStartWidth + deltaX;

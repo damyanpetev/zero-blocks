@@ -1,13 +1,24 @@
-import { Inject, Injectable, InjectionToken, NgZone } from "@angular/core";
-import { DOCUMENT, HAMMER_GESTURE_CONFIG, HammerGestureConfig } from "@angular/platform-browser";
-import { EventManagerPlugin } from "@angular/platform-browser/src/dom/events/event_manager";
+import { Inject, Injectable, InjectionToken, NgZone, Optional } from "@angular/core";
+import {
+    DOCUMENT, EventManager,
+    HAMMER_GESTURE_CONFIG, HammerGestureConfig,
+    ɵd as EventManagerPlugin
+    // , ɵgetDOM as getDOM
+} from "@angular/platform-browser";
 
 const EVENT_PREFIX = "igx-";
 
 /**
  * TODO
  */
-export const IGX_HAMMER_OPTIONS = new InjectionToken<HammerOptions>("HammerOptions");
+export const IGX_HAMMER_OPTIONS = new InjectionToken<HammerOptionsConfig>("HammerOptionsConfig");
+
+/**
+ * @Extend HammerOptions interface for DI
+ */
+@Injectable()
+export class HammerOptionsConfig implements HammerOptions {
+}
 
 /**
  * Touch gestures manager based on Hammer.js
@@ -35,8 +46,8 @@ export class HammerGesturesManager extends EventManagerPlugin {
     private _hammerManagers: Array<{ element: EventTarget, manager: HammerManager; }> = [];
 
     constructor(
-            @Inject(DOCUMENT) doc: any,
-            @Inject(IGX_HAMMER_OPTIONS) private options: HammerOptions) {
+            @Inject(DOCUMENT) private doc: any,
+            @Optional() private options: HammerOptionsConfig) {
         super(doc);
         if (this.options) {
             Object.assign(this.hammerOptions, this.options);
@@ -71,6 +82,19 @@ export class HammerGesturesManager extends EventManagerPlugin {
             return () => { mc.off(eventName, handler); };
         });
     }
+
+    /**
+     * Add listener extended with options for Hammer.js. Will use defaults if none are provided.
+     * Modeling after other event plugins for easy future modifications.
+     *
+     * @param target Can be one of either window, body or document(fallback default).
+     */
+    // public addGlobalEventListener(target: string, eventName: string, eventHandler: (eventObj) => void): () => void {
+    //     const element = getDOM().getGlobalEventTarget(this.doc, target);
+
+    //     // Creating the manager bind events, must be done outside of angular
+    //     return this.addEventListener(element as HTMLElement, eventName, eventHandler);
+    // }
 
     /**
      * Set HammerManager options.

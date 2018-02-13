@@ -24,6 +24,12 @@
     "files": [
       "./tmp/src-inlined/main.ts"
     ],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "types": [
+      "hammerjs"
+    ],
     "angularCompilerOptions": {
       "genDir": "dist",
       "debug": false,

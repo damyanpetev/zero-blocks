@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { HttpModule } from "@angular/http";
-import { BrowserModule } from "@angular/platform-browser";
+import { BrowserModule, EVENT_MANAGER_PLUGINS } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { AvatarSampleModule } from "./avatar/sample.module";
 import { BadgeSampleModule } from "./badge/sample.module";
@@ -39,6 +39,7 @@ import { IgxNavigationDrawerModule } from "../lib/main";
 
 
 import { IgxRadioModule, IgxIconModule, IgxCheckboxModule, IgxLabelModule, IgxSwitchModule, IgxAvatarModule } from "../lib/main";
+import { HammerGesturesManager } from "../lib/core/touch";
 
 
 @NgModule({
@@ -86,6 +87,13 @@ import { IgxRadioModule, IgxIconModule, IgxCheckboxModule, IgxLabelModule, IgxSw
         LayoutSampleModule,
         ListPerformanceSampleModule,
         VirtualForSampleModule
+    ],
+    providers: [
+        // {
+        //     provide: EVENT_MANAGER_PLUGINS,
+        //     useClass: HammerGesturesManager,
+        //     multi: true
+        // }
     ]
 })
 export class AppModule { }
