@@ -12,10 +12,15 @@
                 </div>
             </article>
             <article>
-                <h5 class="setting-title">Style</h5>
+                <h5 class="setting-title">Modes</h5>
                 <div class="setting-container">
                     <igx-switch (change)="pinned()" [(ngModel)]="this.app.drawerState.pin">
                         Pinned Navdrawer
+                    </igx-switch>
+                </div>
+                <div class="setting-container">
+                    <igx-switch (change)="mini()" [(ngModel)]="this.app.drawerState.miniVariant">
+                        Mini variant
                     </igx-switch>
                 </div>
             </article>

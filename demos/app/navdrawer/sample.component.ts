@@ -18,4 +18,11 @@ export class NavdrawerSampleComponent {
         this.app.drawerState.pin = !this.app.drawerState.pin;
         this.toggle();
     }
+
+    private mini() {
+        this.app.drawerState.miniVariant = !this.app.drawerState.miniVariant;
+        this.app.navdrawer.close();
+        this.app.navdrawer.open();
+        this.app.navdrawer.close();
+    }
 }
