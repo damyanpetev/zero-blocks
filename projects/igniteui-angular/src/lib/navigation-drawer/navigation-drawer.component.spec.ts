@@ -15,7 +15,7 @@ import * as Infragistics from '../../public_api';
 declare var Simulator: any;
 const oldTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
 
-describe('Navigation Drawer', () => {
+fdescribe('Navigation Drawer', () => {
         beforeEach(async(() => {
             jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
             TestBed.configureTestingModule({
@@ -471,6 +471,7 @@ describe('Navigation Drawer', () => {
         });
 
         it('should get correct window width', (done) => {
+            jasmine.expectCount(3);
             const originalWidth = window.innerWidth;
             // re-enable `getWindowWidth`
             const widthSpy = (this.widthSpyOverride as jasmine.Spy).and.callThrough();

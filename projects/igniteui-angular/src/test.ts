@@ -9,6 +9,8 @@ import {
   platformBrowserDynamicTesting
 } from '@angular/platform-browser-dynamic/testing';
 
+import 'jasmine-expect-count'; // add jasmine.expectCount(), definition in test-types.d.ts
+
 declare const require: any;
 
 // First, initialize the Angular testing environment.
